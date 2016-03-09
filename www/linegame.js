@@ -62,7 +62,8 @@
   		   reactionTime=performance.now()-timeStarted;
 
   		   res_x= event.stageX-SQ_X;
-  		   res_xr=Math.round(100*(res_x - SQ_X)/SQ_W);
+  		   res_xr=(100*(res_x - SQ_X)/SQ_W);
+  		   res_xrr=Math.round(res_xr)
   		   true_xr=TRUE_RATIO;
   		   true_x=SQ_W*true_xr/100;
   		   var isCorrect=false;
