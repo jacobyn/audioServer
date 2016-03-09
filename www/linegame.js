@@ -61,11 +61,10 @@
   		   
   		   reactionTime=performance.now()-timeStarted;
 
-  		   res_x= event.stageX-SQ_X;
-  		   res_xr=(100*(res_x - SQ_X)/SQ_W);
-  		   res_xrr=Math.round(res_xr)
+  		   res_x= event.stageX;
+  		   res_xr=Math.round(100*(res_x-SQ_X)/SQ_W);
   		   true_xr=TRUE_RATIO;
-  		   true_x=SQ_W*true_xr/100;
+  		   true_x=SQ_X+SQ_W*Math.round(true_xr)/100;
   		   var isCorrect=false;
   		   results.push(res_xr);
 
@@ -87,10 +86,10 @@
 	  		}
 	
   		   var res_square = new createjs.Shape();
-  		   res_square.graphics.beginStroke("white").beginFill("white").drawRect(SQ_X+res_x, SQ_Y+2, 3, SQ_H-4);
+  		   res_square.graphics.beginStroke("white").beginFill("white").drawRect(res_x, SQ_Y+2, 3, SQ_H-4);
 		   
 		   var true_square = new createjs.Shape();
-  		   true_square.graphics.beginStroke("green").beginFill("green").drawRect(SQ_X+true_x, SQ_Y+1, 1, SQ_H-2);
+  		   true_square.graphics.beginStroke("green").beginFill("green").drawRect(true_x, SQ_Y+1, 1, SQ_H-2);
   		   stage.addChild(square);
 		   stage.addChild(res_square);
 
