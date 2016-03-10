@@ -1,4 +1,9 @@
-	var SQ_X=20; // begining of square
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="http://code.createjs.com/easeljs-0.7.0.min.js"></script>
+    <script>
+    var SQ_X=20; // begining of square
 	var SQ_Y=20; // begining of square
 	var SQ_W=600; // width of square
 	var SQ_H=100; // height of square
@@ -10,7 +15,6 @@
 	var IS_FEEDBACK=true; //give feedback?
 
 	var WAIT_TIME=2000; // in between trials wait time
-	var MAX_TIME_TRIAL=10*1000;
 	var MAX_REPATS=3;   // maximal number of repetiotions to try find correct response
 	
 	var DEBUG=true; // plot internal variables (for debug puropose)
@@ -19,12 +23,9 @@
 	var results=[]; //output list
 	var result;    //the final output (NaN if incorrect)
 	var repeats=0; //number of repeats
-	var reactionTime=0;
 
-	var timeStarted;
 
 	var stage; // global variable holding the stage (canvas)
-	//var d = new Date();
 
         function init() {
             stage = new createjs.Stage("demoCanvas");
@@ -33,38 +34,20 @@
 			square.graphics.setStrokeStyle(2).beginStroke("black").beginFill("gray").drawRoundRect(SQ_X, SQ_Y, SQ_W, SQ_H,SQ_R,SQ_R,SQ_R,SQ_R);
 			stage.addChild(square);
 			stage.update();
-			timeStarted=performance.now();
 			square.addEventListener("click", handleClick);
 		 	document.getElementById("Target").innerHTML= "Target: "+ TRUE_RATIO + " % ";
 			document.getElementById("Target").style.color = "green";
 			document.getElementById("Feedback").style.color = "black";
 			document.getElementById("Feedback").innerHTML="Segment the square according to the target's percentage:"
-			currentRepeat=repeats;
-			setInterval(function(){timeOver(currentRepeat)},MAX_TIME_TRIAL);
-         }
-
-         function timeOver(current_repeat) {
-         	if (current_repeat!=repeats){return;}
-            document.getElementById("Feedback").innerHTML= "Time over! You only have " + Math.round(MAX_TIME_TRIAL/1000) + " seconds to complete the trial!";
-			document.getElementById("Feedback").style.color = "red";
-			result=NaN;results.push(result);
-			
-			reactionTime=performance.now()-timeStarted;
-		    var square = new createjs.Shape(); 
-			square.graphics.setStrokeStyle(5).beginStroke("red").beginFill("gray").drawRoundRect(SQ_X, SQ_Y, SQ_W, SQ_H,SQ_R,SQ_R,SQ_R,SQ_R);
-		    stage.addChild(square);
-  		    stage.update();
          }
 
 		  // Click happenened
          function handleClick(event){
   		   
-  		   reactionTime=performance.now()-timeStarted;
-
-  		   res_x= event.stageX;
-  		   res_xr=Math.round(100*(res_x-SQ_X)/SQ_W);
+  		   res_x= event.stageX-SQ_X;
+  		   res_xr=Math.round(100*(res_x - SQ_X)/SQ_W);
   		   true_xr=TRUE_RATIO;
-  		   true_x=SQ_X+SQ_W*Math.round(true_xr)/100;
+  		   true_x=SQ_W*true_xr/100;
   		   var isCorrect=false;
   		   results.push(res_xr);
 
@@ -86,10 +69,10 @@
 	  		}
 	
   		   var res_square = new createjs.Shape();
-  		   res_square.graphics.beginStroke("white").beginFill("white").drawRect(res_x, SQ_Y+2, 3, SQ_H-4);
+  		   res_square.graphics.beginStroke("white").beginFill("white").drawRect(SQ_X+res_x, SQ_Y+2, 3, SQ_H-4);
 		   
 		   var true_square = new createjs.Shape();
-  		   true_square.graphics.beginStroke("green").beginFill("green").drawRect(true_x, SQ_Y+1, 1, SQ_H-2);
+  		   true_square.graphics.beginStroke("green").beginFill("green").drawRect(SQ_X+true_x, SQ_Y+1, 1, SQ_H-2);
   		   stage.addChild(square);
 		   stage.addChild(res_square);
 
@@ -118,13 +101,30 @@
 		    }
 		  
 		   document.getElementById("Target").innerHTML= "Target: " + true_xr + " %";
-		   document.getElementById("Target").innerHTML= "Target: " + TRUE_RATIO + " % ";
+		   document.getElementById("Target").innerHTML= "Target: "+ TRUE_RATIO + " % ";
 		   setTimeout(function(){
-		   	if (repeats<MAX_REPATS) {
+		   	if (repeats<=MAX_REPATS) {
 		   		if (!isCorrect) {init();}
 		   	}
 			    
 		   }, WAIT_TIME);
-		   document.getElementById("Debug").innerHTML= "Results: " + results.toString() + " Result: " + result + 
-		   " Repeats: " + repeats +"/" + MAX_REPATS + "reaction time: " + reactionTime;
+		   document.getElementById("Debug").innerHTML= "Results: " + results.toString() + " Result: " + result + " Repeats: " + repeats +"/" + MAX_REPATS;
 		 }
+
+    </script>
+</head>
+<body onload="init();">
+	<h1>Line Segmentation Game</h1>
+	<p id="Counter"> Trial 1/1</p>
+	<p id="Feedback">Segment the square according to the target's percentage: </p>
+	<p id="Target"> Target: XX %</p>
+
+    <canvas id="demoCanvas" width="700" height="300">
+        
+    </canvas>
+    <p id="Debug"> </p>
+
+</body>
+</html>
+
+
