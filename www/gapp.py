@@ -31,4 +31,5 @@ def postRes():
     return json.dumps({'status':'OK','data':json.dumps(data)});
 
 if __name__ == "__main__":
-    app.run(host='104.236.171.189')
+    #app.run(host='104.236.171.189')
+    app.run(host='0.0.0.0')

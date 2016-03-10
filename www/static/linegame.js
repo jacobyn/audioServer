@@ -20,17 +20,17 @@ var results=[]; //output list
 var result;    //the final output (NaN if incorrect)
 var repeats=0; //number of repeats
 var reactionTime=0;
-
 var timeStarted;
-
 var stage; // global variable holding the stage (canvas)
 //var d = new Date();
 
+// when document is ready run this:
 $(document).ready(function () {
     startInit();
 });
 
 
+// get the seed from server:
 function startInit() {
     $.get("/getseed", function(data) {
         TRUE_RATIO=Number($.parseJSON(data));
@@ -38,22 +38,25 @@ function startInit() {
     })
 }
 
+// draw things on the screen
 function init() {
-     stage = new createjs.Stage("demoCanvas");
+    stage = new createjs.Stage("demoCanvas");
 
-        var square = new createjs.Shape();
-        square.graphics.setStrokeStyle(2).beginStroke("black").beginFill("gray").drawRoundRect(SQ_X, SQ_Y, SQ_W, SQ_H,SQ_R,SQ_R,SQ_R,SQ_R);
-        stage.addChild(square);
-        stage.update();
-        timeStarted=performance.now();
-        square.addEventListener("click", handleClick);
-        document.getElementById("Target").innerHTML= "Target: "+ TRUE_RATIO + " % ";
-        document.getElementById("Target").style.color = "green";
-        document.getElementById("Feedback").style.color = "black";
-        document.getElementById("Feedback").innerHTML="Segment the square according to the target's percentage:"
-        currentRepeat=repeats;
-        setInterval(function(){timeOver(currentRepeat)},MAX_TIME_TRIAL);
+    var square = new createjs.Shape();
+    square.graphics.setStrokeStyle(2).beginStroke("black").beginFill("gray").drawRoundRect(SQ_X, SQ_Y, SQ_W, SQ_H,SQ_R,SQ_R,SQ_R,SQ_R);
+    stage.addChild(square);
+    stage.update();
+    timeStarted=performance.now();
+    square.addEventListener("click", handleClick);
+    document.getElementById("Target").innerHTML= "Target: "+ TRUE_RATIO + " % ";
+    document.getElementById("Target").style.color = "green";
+    document.getElementById("Feedback").style.color = "black";
+    document.getElementById("Feedback").innerHTML="Segment the square according to the target's percentage:"
+    currentRepeat=repeats;
+    setInterval(function(){timeOver(currentRepeat)},MAX_TIME_TRIAL);
 }
+
+// send result to server
 function finished(){
    var output = {"results": results.toString(), "result": result.toString(), "repeats": repeats.toString(), reactionTime:reactionTime.toString(), "TRUE_RATIO": TRUE_RATIO}
    //console.log(output);
@@ -73,6 +76,7 @@ function finished(){
    setTimeout(function(){location.reload(true);},WAIT_TIME);
 }
 
+// cant wait so long... abort and send NaN result
 function timeOver(current_repeat) {
     if (current_repeat!=repeats){return;}
     document.getElementById("Feedback").innerHTML= "Time over! You only have " + Math.round(MAX_TIME_TRIAL/1000) + " seconds to complete the trial!";
@@ -89,7 +93,8 @@ function timeOver(current_repeat) {
 
     finished();
 }
-  // Click happenened
+
+  // Click happenened: manage interface
 function handleClick(event){
 
    reactionTime=performance.now()-timeStarted;
@@ -150,28 +155,13 @@ function handleClick(event){
        document.getElementById("Feedback").innerHTML= "This is not accurate enought. Let's try again...";
        document.getElementById("Feedback").style.color = "red";
    }
-
 }
 
 
-
-//    $.ajax({
-            // url: '/postres',
-            // data: output.toString,
-            // type: 'POST',
-            // success: function(response) {
-            //     console.log(response);
-            // },
-            // error: function(error) {
-            //     console.log(error);
-            // }
-            //  });
-
-
-
-document.getElementById("Target").innerHTML= "Target: " + true_xr + " %";
-document.getElementById("Target").innerHTML= "Target: " + TRUE_RATIO + " % ";
-setTimeout(function(){
+    document.getElementById("Target").innerHTML= "Target: " + true_xr + " %";
+    document.getElementById("Target").innerHTML= "Target: " + TRUE_RATIO + " % ";
+    // wait a bit and than redo
+    setTimeout(function(){
 
     if (repeats<MAX_REPATS) {
         if (!isCorrect) {init();}
@@ -185,6 +175,12 @@ setTimeout(function(){
     }
 
 }, WAIT_TIME);
-document.getElementById("Debug").innerHTML= "Results: " + results.toString() + " Result: " + result +
-" Repeats: " + repeats +"/" + MAX_REPATS + "reaction time: " + reactionTime;
+
+// for debug: eventuall remove this
+    if (DEBUG) {
+
+
+        document.getElementById("Debug").innerHTML= "Results: " + results.toString() + " Result: " + result +
+        " Repeats: " + repeats +"/" + MAX_REPATS + "reaction time: " + reactionTime;
+    }
 }
