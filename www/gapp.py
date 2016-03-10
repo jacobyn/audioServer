@@ -1,5 +1,8 @@
+#import os;
+#sys.path.insert(1, os.path.dirname(os.path.realpath(__file__)))
+
 from flask import Flask, render_template, json, request
-from flask.ext.mysql import MySQL
+#from flask.ext.mysql import MySQL
 import random
 
 from werkzeug import generate_password_hash, check_password_hash
@@ -28,4 +31,4 @@ def postRes():
     return json.dumps({'status':'OK','data':json.dumps(data)});
 
 if __name__ == "__main__":
-    app.run(port=5002)
+    app.run(host='104.236.171.189')
